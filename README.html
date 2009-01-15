@@ -1,0 +1,30 @@
+<html><pre>
+This is the readme for the model for the paper:
+
+Lytton WW; Neymotin SA; Hines ML. The virtual slice setup.  J.
+Neurosci Methods. 171:309-15.  PMID: 18452996, 2008.
+
+This model will only run under unix/linux.
+How to run:
+
+under NEURON version 6
+  nrnivmodl intfN6_ misc nstim statsN6 vecst
+under NEURON version 7
+  nrnivmodl intf_ misc nstim stats vecst
+to run:
+  nrngui mosinit.hoc
+
+leads user through a demo of major features
+turn off demo by setting 'showdemo=0' at top of mosinit.hoc
+
+note 'Help' button at bottom of major menu 'Slice'
+
+generated windows are not arranged since I found that my default
+placements ended up off the screen for some users
+
+while the slice runs the modeler can control the simulation
+interactively through control panels and graphs of activity are
+displayed:
+
+<img src="./screenshot.jpg" alt="screenshot">
+</pre></html>
