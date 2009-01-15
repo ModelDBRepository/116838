@@ -42,6 +42,9 @@ VERBATIM
 #include <float.h>
 #include <sys/time.h> 
 #include <pthread.h>
+#if !defined(t)
+#define _pval pval
+#endif
 extern double BVBASE;
 extern double* hoc_pgetarg();
 Symbol *hoc_get_symbol();

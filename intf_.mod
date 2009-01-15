@@ -17,6 +17,9 @@ ENDCOMMENT
 
 :* main VERBATIM block
 VERBATIM
+#if !defined(t)
+#define _pval pval
+#endif
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -403,7 +406,11 @@ ENDVERBATIM
       if (!ip->flag) ip->flag=(unsigned char)floor(t)+1;
     } else { // first callback will be from the stim
       ip->flag=(unsigned char)floor(t)+1;
+#if defined(t)
       net_send((void**)0x0, wts,tpnt,t+1.,-1.); // the callback call
+#else
+      net_send((void**)0x0, wts,tpnt,1.,-1.); // the callback call
+#endif
       return;
     }
   }
@@ -818,7 +825,11 @@ PROCEDURE jitcon (tm) {
     spkstats2(1.);
   }
   prty=(int)ip->type;
+#if defined(t)
   if (ip->jcn==1) if (ip->dvt>0) net_send((void**)0x0, wts,tpnt,t+ip->del[0],-1.); // first callback
+#else
+  if (ip->jcn==1) if (ip->dvt>0) net_send((void**)0x0, wts,tpnt,ip->del[0],-1.); // first callback
+#endif
   }   
   ENDVERBATIM  
 }
@@ -891,7 +902,11 @@ PROCEDURE callback (fl) {
   while (i<jp->dvt && (!jp->sprob[i] || (*(id0**)&(jp->dvi[i]->_prop->dparam[2]))->dead)) i++;
   if (i<jp->dvt) {
     ddel= jp->del[i] - del0;;
+#if defined(t)
     net_send((void**)0x0, wts,upnt,t+ddel,(double) -(i+1)); // next callback
+#else
+    net_send((void**)0x0, wts,upnt,ddel,(double) -(i+1)); // next callback
+#endif
   }
   } 
   ENDVERBATIM
@@ -1904,7 +1919,11 @@ PROCEDURE shock () {
       if (isp[i]!=last) { // skip any redund indices
         lop(ce,(unsigned int)isp[i]);
         WEX=-1e9; // code for shock
+#if defined(t)
         net_send((void**)0x0, wts,pmt,t+vsp[i],2.0); // 2 is randspk flag
+#else
+        net_send((void**)0x0, wts,pmt,vsp[i],2.0); // 2 is randspk flag
+#endif
         i++;
       }
     }
