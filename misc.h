@@ -6,7 +6,6 @@
 #include <limits.h> /* contains LONG_MAX */
 #include <time.h>
 #include <sys/time.h>
-#include <values.h>
 
 typedef struct BVEC {
  int size;
@@ -35,10 +34,10 @@ typedef	unsigned char	ui1;	/* one byte unsigned integer */
 typedef	char		si1;	/* one byte signed integer */
 typedef unsigned short	ui2;	/* two byte unsigned integer */
 typedef short		si2;	/* two byte signed integer */
-typedef unsigned int	ui4;	/* four byte unsigned integer */ 
-typedef int		si4;	/* four byte signed integer */ 
-typedef float		sf4;	/* four byte signed floating point number */ 
-typedef double		sf8;	/* eight byte signed floating point number */ 
+typedef unsigned int	ui4;	/* four byte unsigned integer */
+typedef int		si4;	/* four byte signed integer */
+typedef float		sf4;	/* four byte signed floating point number */
+typedef double		sf8;	/* eight byte signed floating point number */
 
 extern double *vector_newsize();
 extern unsigned int scrsz;

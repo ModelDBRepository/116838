@@ -36,13 +36,15 @@ PARAMETER {
 ASSIGNED { seed }
 
 VERBATIM
-#include <stdlib.h>
-#include <math.h>
-#include <limits.h> /* contains LONG_MAX */
 #include <float.h>
-#include <sys/time.h> 
 #include <pthread.h>
+#ifdef NRN_VERSION_GTEQ_8_2_0
 #include "misc.h"
+#else
+#include <stdlib.h>
+#include <limits.h> /* contains LONG_MAX */
+#include <math.h>
+#include <sys/time.h>
 #if !defined(t)
 #define _pval pval
 #endif
@@ -61,7 +63,6 @@ extern int uniq2();
 extern void* vector_arg();
 extern double* vector_vec();
 extern double hoc_epsilon;
-extern unsigned int mcell_iran4(unsigned int* idum,unsigned int* ran_vec,unsigned int n,double range);
 extern void set_seed();
 extern unsigned int scrsz;
 extern unsigned int *scr;
@@ -71,12 +72,12 @@ extern Object* ivoc_list_item(Object*, int);
 extern int hoc_is_double_arg(int narg);
 extern int hoc_is_object_arg(int narg);
 extern Objectdata *hoc_objectdata;
-extern int openvec(int, double **);
 extern char* hoc_object_name(Object*);
 double *list_vector_resize();
+#endif
+extern int openvec(int, double **);
 unsigned int valseed;
 static double *x1x, *y1y, *z1z;
-
 
 union dblint {
   int i[2];
