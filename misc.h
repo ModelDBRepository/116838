@@ -39,7 +39,7 @@ typedef int		si4;	/* four byte signed integer */
 typedef float		sf4;	/* four byte signed floating point number */
 typedef double		sf8;	/* eight byte signed floating point number */
 
-extern double *vector_newsize();
+double *vector_newsize(void* vv, int n);
 extern unsigned int scrsz;
 extern unsigned int *scr;
 extern unsigned int *scrset(int);
@@ -74,15 +74,6 @@ extern short *nrn_artcell_qindex_;
 extern double nrn_event_queue_stats(double*);
 extern void clear_event_queue();
 extern Object* ivoc_list_item(Object*, int);
-#else // TODO: Update nrn master & C++ PR
-#ifdef __cplusplus
-extern "C" {
-#endif
-Object* ivoc_list_item(Object*, int);
-Symbol* hoc_get_symbol(const char* var);
-#ifdef __cplusplus
-}
-#endif
 #endif
 
 extern int cmpdfn(double a, double b);
