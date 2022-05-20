@@ -38,44 +38,10 @@ ASSIGNED { seed }
 VERBATIM
 #include <float.h>
 #include <pthread.h>
-#ifdef NRN_VERSION_GTEQ_8_2_0
 #include "misc.h"
-#else
-#include <stdlib.h>
-#include <limits.h> /* contains LONG_MAX */
-#include <math.h>
-#include <sys/time.h>
 #if !defined(t)
 #define _pval pval
 #endif
-extern double BVBASE;
-extern double* hoc_pgetarg();
-extern double* hoc_pgetarg();
-char ** hoc_pgargstr();
-extern Point_process* ob2pntproc(Object*);
-extern double hoc_call_func(Symbol*, int narg);
-extern FILE* hoc_obj_file_arg(int narg);
-extern Object** hoc_objgetarg();
-extern void vector_resize();
-extern double *vector_newsize(void* vv, int n);
-extern int vector_instance_px();
-extern int uniq2();
-extern void* vector_arg();
-extern double* vector_vec();
-extern double hoc_epsilon;
-extern void set_seed();
-extern unsigned int scrsz;
-extern unsigned int *scr;
-extern unsigned int *scrset(int);
-extern int ivoc_list_count(Object*);
-extern Object* ivoc_list_item(Object*, int);
-extern int hoc_is_double_arg(int narg);
-extern int hoc_is_object_arg(int narg);
-extern Objectdata *hoc_objectdata;
-extern char* hoc_object_name(Object*);
-double *list_vector_resize();
-#endif
-extern int openvec(int, double **);
 unsigned int valseed;
 static double *x1x, *y1y, *z1z;
 

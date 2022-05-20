@@ -59,8 +59,10 @@ extern double* vector_vec();
 extern double hoc_epsilon;
 extern int stoprun;
 extern void set_seed();
+extern double mcell_ran4(unsigned int* idum,double* ran_vec,unsigned int n,double range);
 extern int nrn_mlh_gsort();
 extern int ivoc_list_count(Object*);
+extern Object* ivoc_list_item(Object*, int);
 extern int hoc_is_double_arg(int narg);
 extern int hoc_is_tempobj_arg(int narg);
 extern Symbol *hoc_get_symbol(char *);
@@ -68,12 +70,10 @@ extern Symbol *hoc_lookup(const char*);
 extern Point_process* ob2pntproc(Object*);
 
 extern char* hoc_object_name(Object*);
-extern int openvec(int, double **);
 int list_vector_px();
 extern short *nrn_artcell_qindex_;
 extern double nrn_event_queue_stats(double*);
 extern void clear_event_queue();
-extern Object* ivoc_list_item(Object*, int);
 #endif
 
 extern int cmpdfn(double a, double b);
@@ -82,7 +82,7 @@ extern int list_vector_px2(Object *ob, int i, double** px, void** vv);
 extern int list_vector_px3 (Object *ob, int i, double** px, void** vv);
 extern int list_vector_px4 (Object *ob, int i, double** px, unsigned int n);
 extern void mcell_ran4_init(uint32_t idum);
-extern double mcell_ran4(unsigned int* idum,double* ran_vec,unsigned int n,double range);
+extern int openvec(int, double **);
 extern void cvode_fadvance(double);
 int list_vector_px(Object *ob, int i, double** px);
 double *list_vector_resize(Object *ob, int i, int sz);
