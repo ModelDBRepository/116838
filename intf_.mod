@@ -48,7 +48,6 @@ extern double nrn_event_queue_stats(double*);
 extern void clear_event_queue();
 extern double *vector_newsize(void*, int);
 extern Objectdata *hoc_objectdata;
-extern int cmpdfn(double,double);
 extern unsigned int scrsz;
 extern unsigned int *scr;
 extern unsigned int *scrset(int);
