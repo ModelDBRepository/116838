@@ -27,39 +27,8 @@ VERBATIM
 #include <limits.h> /* contains LONG_MAX */
 #include "misc.h"
 
-extern void* vector_arg();
-extern double hoc_call_func(Symbol*, int);
-extern double* hoc_pgetarg(int);
-extern FILE* hoc_obj_file_arg(int);
-extern int list_vector_px(Object*, int, double**);
-extern int list_vector_px2 (Object*, int, double**, void**);
-extern Object** hoc_objgetarg(int);
-extern int ivoc_list_count(Object*);
-extern Object* ivoc_list_item(Object*, int);
-extern Symbol *hoc_lookup(const char*);
-extern Point_process* ob2pntproc(Object*);
-extern int hoc_is_double_arg(int narg);
 static int ctt(unsigned int, char**);
 static int setdvi2(double*,double*,int,int);
-extern int stoprun;
-extern double hoc_epsilon;
-extern short *nrn_artcell_qindex_;
-extern double nrn_event_queue_stats(double*);
-extern void clear_event_queue();
-extern double *vector_newsize(void*, int);
-extern Objectdata *hoc_objectdata;
-extern unsigned int scrsz;
-extern unsigned int *scr;
-extern unsigned int *scrset(int);
-
-typedef struct{
-  int isz;
-  double** pv;
-  int* plen;
-} ListVec;
-
-extern void FreeListVec(ListVec** pp);
-extern ListVec* AllocListVec(Object* p);
 
 #define PI 3.141592653589793115997963468544
 #define nil 0
@@ -1950,11 +1919,12 @@ PROCEDURE trvsp ()
 {
   VERBATIM 
   int i, flag; 
-  double ind, t0;
+  double ind, t0_local;
   ip=IDP;
   flag=(int) *getarg(1);
   if (subsvint==0.) {printf("trvsp"); return(0.);}
-  ind=isp[0]; t0=vsp[0];
+  ind=isp[0];
+  t0_local=vsp[0];
   if (flag==1) {
     for (i=0; i<vspn; i++) {
       if (isp[i]!=ind) {
@@ -1966,11 +1936,12 @@ PROCEDURE trvsp ()
   } else if (flag==2) {
     for (i=0; i<vspn; i++) {
       if (isp[i]!=ind) {
-        vsp[i-1]=t0+subsvint;
-        ind=isp[i]; t0=vsp[i];
+        vsp[i-1] = t0_local + subsvint;
+        ind = isp[i];
+        t0_local = vsp[i];
       }
     }
-    vsp[vspn-1]=t0+subsvint;
+    vsp[vspn-1] = t0_local + subsvint;
   } else {printf("trvsp flag %d not recognized\n",flag); hxe();}
   ENDVERBATIM
 }

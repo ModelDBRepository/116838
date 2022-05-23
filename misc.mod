@@ -48,7 +48,7 @@ VERBATIM
 #include <time.h>
 #include <stdio.h>
 #include <limits.h>
-#include <misc.h>
+#include "misc.h"
 extern int hoc_is_tempobj(int narg);
 ENDVERBATIM
 

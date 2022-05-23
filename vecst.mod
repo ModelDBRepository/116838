@@ -105,37 +105,8 @@ VERBATIM
 #include <string.h>
 #include "misc.h"
 
-extern double tstop;
-extern double* hoc_pgetarg();
-extern double hoc_call_func(Symbol*, int narg);
-extern FILE* hoc_obj_file_arg(int narg);
-extern Object** hoc_objgetarg();
-extern int vector_instance_px();
-extern void* vector_arg();
-extern double* vector_vec();
-extern double hoc_epsilon;
-extern double chkarg();
-extern void set_seed();
-extern int ivoc_list_count(Object*);
-extern int hoc_is_double_arg(int narg);
-extern char* hoc_object_name(Object*);
-char ** hoc_pgargstr();
-double *vector_newsize(void* vv, int n);
 int ismono1();
-double *list_vector_resize(Object *ob, int i, int sz);
-int openvec(int arg, double **y);
-int IsList (Object* p);
-static void hxf(void *ptr) { free(ptr); hoc_execerror("",0); }
-
-typedef struct {
-  int isz;
-  double** pv;
-  int* plen;
-} ListVec;
-ListVec* AllocListVec(Object* p);
-ListVec* AllocILV(Object* p, int nx, double *x);
-void FillListVec(ListVec* p,double dval);
-void FreeListVec(ListVec** pp);
+int IsList(Object* p);
 
 #define VRRY 50
 #define ISVEC(_OB__) (strncmp(hoc_object_name(_OB__),"Vector",6)==0)
@@ -1201,7 +1172,7 @@ static double keyind (void* vv) {
   int i, j, k, ni, nk, nv[VRRY], num;
   double *ind, *key, *vvo[VRRY];
   ni = vector_instance_px(vv, &ind); // vv is ind
-  for (i=0;ifarg(i);i++); i--; // drop back by one to get numarg()
+  for (i=0;ifarg(i);i++) {} i--; // drop back by one to get numarg()
   if (i>VRRY) hoc_execerror("ERR: keyind can only handle VRRY vectors", 0);
   num = i-1; // number of vectors to be picked apart 
   for (i=0;i<num;i++) { 

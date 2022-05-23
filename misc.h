@@ -14,6 +14,12 @@ typedef struct BVEC {
  Object* o;
 } bvec;
 
+typedef struct {
+  int isz;
+  double** pv;
+  int* plen;
+} ListVec;
+
 #define BYTEHEADER int _II__;  char *_IN__; char _OUT__[16]; int BYTESWAP_FLAG=0;
 #define BYTESWAP(_X__,_TYPE__) \
     if (BYTESWAP_FLAG == 1) { \
@@ -74,6 +80,7 @@ int list_vector_px();
 extern short *nrn_artcell_qindex_;
 extern double nrn_event_queue_stats(double*);
 extern void clear_event_queue();
+extern Objectdata *hoc_objectdata;
 #endif
 
 extern int cmpdfn(double a, double b);
@@ -89,4 +96,9 @@ double *list_vector_resize(Object *ob, int i, int sz);
 int uniq2 (int n, double *x, double *y, double *z);
 static void hxe() { hoc_execerror("",0); }
 static double sc[6];
+
+ListVec* AllocListVec(Object* p);
+ListVec* AllocILV(Object* p, int nx, double *x);
+void FillListVec(ListVec* p,double dval);
+void FreeListVec(ListVec** pp);
 
