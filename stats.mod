@@ -36,60 +36,14 @@ PARAMETER {
 ASSIGNED { seed }
 
 VERBATIM
-#include <stdlib.h>
-#include <math.h>
-#include <limits.h> /* contains LONG_MAX */
 #include <float.h>
-#include <sys/time.h> 
 #include <pthread.h>
+#include "misc.h"
 #if !defined(t)
 #define _pval pval
 #endif
-extern double BVBASE;
-extern double* hoc_pgetarg();
-Symbol *hoc_get_symbol();
-extern double* hoc_pgetarg();
-char ** hoc_pgargstr();
-extern Point_process* ob2pntproc(Object*);
-extern double hoc_call_func(Symbol*, int narg);
-extern FILE* hoc_obj_file_arg(int narg);
-extern Object** hoc_objgetarg();
-extern void vector_resize();
-extern double *vector_newsize();
-extern int vector_instance_px();
-extern int uniq2();
-extern void* vector_arg();
-extern double* vector_vec();
-extern double hoc_epsilon;
-extern void mcell_ran4_init(unsigned int *idum);
-extern double mcell_ran4(unsigned int* idum,double* ran_vec,unsigned int n,double range);
-extern unsigned int mcell_iran4(unsigned int* idum,unsigned int* ran_vec,unsigned int n,double range);
-extern void set_seed();
-extern unsigned int scrsz;
-extern unsigned int *scr;
-extern unsigned int *scrset();
-extern int ivoc_list_count(Object*);
-extern Object* ivoc_list_item(Object*, int);
-extern int list_vector_px2();
-extern int hoc_is_double_arg(int narg);
-extern int hoc_is_object_arg(int narg);
-extern Objectdata *hoc_objectdata;
-extern int openvec(int, double **);
-extern char* hoc_object_name(Object*);
-extern int nrn_mlh_gsort();
-extern int cmpdfn();
-int list_vector_px();
-double *list_vector_resize();
-static void hxe() { hoc_execerror("",0); }
 unsigned int valseed;
 static double *x1x, *y1y, *z1z;
-
-typedef struct BVEC {
- int size;
- int bufsize;
- short *x;
- Object* o;
-} bvec;
 
 union dblint {
   int i[2];
@@ -465,9 +419,9 @@ static double* getrank (int n, double mdata[])
 { int i;
   double* rank;
   int* index;
-  rank = malloc(n*sizeof(double));
+  rank = (double*)malloc(n*sizeof(double));
   if (!rank) return NULL;
-  index = malloc(n*sizeof(int));
+  index = (int*)malloc(n*sizeof(int));
   if (!index)
   { free(rank);
     return NULL;
@@ -509,9 +463,9 @@ static double spearman(int n, double* data1, double* data2)
   double avgrank;
   double* tdata1;
   double* tdata2;
-  tdata1 = malloc(n*sizeof(double));
+  tdata1 = (double*)malloc(n*sizeof(double));
   if(!tdata1) return 0.0; /* Memory allocation error */
-  tdata2 = malloc(n*sizeof(double));
+  tdata2 = (double*)malloc(n*sizeof(double));
   if(!tdata2) /* Memory allocation error */
   { free(tdata1);
     return 0.0;
@@ -686,8 +640,8 @@ static double hash (void* vv) {
       } else   {  xx.d=vvo[j][i]; }
       if (xx.i[0]==0) { xx.i[0]=xx.i[1]; xx.i[0]<<=4; } // high order bits may be 0
       if (xx.i[1]==0) { xx.i[1]=xx.i[0]; xx.i[1]<<=4; } // low order bits unlikely 0
-      mcell_ran4_init(&xx.i[1]);
-      mcell_ran4(&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
+      mcell_ran4_init(xx.i[1]);
+      mcell_ran4((unsigned int*)&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
       prod*=y;  // keep multiplying these out
     }
     if (! vfl) x[i]=prod; else return prod; // just return the 1 value
@@ -792,7 +746,7 @@ static double setrnd (void* vv) {
       scrset(nex);
       x1x = (double *)realloc(x1x,sizeof(double)*nx*4);
       for (i=0;i<nex;i++) scr[i]=i;
-      nrn_mlh_gsort(ex, scr, nex, cmpdfn);
+      nrn_mlh_gsort(ex, (int*)scr, nex, cmpdfn);
       for (i=0;i<nex;i++) x1x[i]=ex[scr[i]];
       for (i=0;i<nex;i++) ex[i]=x1x[i];
     }
@@ -1047,7 +1001,7 @@ static double comb (void* vv) {
   }
   memset(x,0,sizeof(double)*kk);
   synccv(nn,kk,cc,x);
-  vector_resize(vv,kk);
+  vector_resize((IvocVect*)vv,kk);
   return 1.0;
 }
 ENDVERBATIM
@@ -1100,7 +1054,9 @@ static double rsampsig(void* vv){
   void* vhso; //vector * for changing size at end
   Symbol* pHocVecFunc,*pHocCompFunc; //hoc function pointers
   dret=-1.0;
-  g0t=g1t=pm=pcombids=pids=0x0; //init arrays to null
+  g0t=g1t=0x0;
+  pm=pids=0x0; //init arrays to null
+  pcombids=0x0;
   szthis=vector_instance_px(vv, &pthis); //size of calling vector
   n0=vector_arg_px(1,&g0);//group 0 size
   n1=vector_arg_px(2,&g1);//group 1 size
@@ -1157,18 +1113,18 @@ static double rsampsig(void* vv){
     if(verbose>2){ for(j=0;j<n0;j++) pm[pids[j]]=0; for(;j<na;j++) pm[pids[j]]=1;  printf("pm: ");
       for(j=0;j<40;j++) printf("%d",pm[j]); printf("\n"); }//print out bit-array of element ids
     //compare measures between
-    vector_resize(vhso, n0); memcpy(phso,g0t,sizeof(double)*n0); 
+    vector_resize((IvocVect*)vhso, n0); memcpy(phso,g0t,sizeof(double)*n0); 
     hoc_call_func(pHocVecFunc,0); dm0 = hretval; //get measure on group 0
-    vector_resize(vhso, n1); memcpy(phso,g1t,sizeof(double)*n1); 
+    vector_resize((IvocVect*)vhso, n1); memcpy(phso,g1t,sizeof(double)*n1); 
     hoc_call_func(pHocVecFunc,0); dm1 = hretval; //get measure on group 1
     hoc_pushx(dm0); hoc_pushx(dm1); hoc_call_func(pHocCompFunc,2); //call comparison function
     pthis[i]=onesided?hretval:fabs(hretval); //save value from comparison function
   }
-  vector_resize(vv,nruncombs);//resize calling vec
+  vector_resize((IvocVect*)vv,nruncombs);//resize calling vec
   //get comparison function value for original data groups
-  vector_resize(vhso,n0); memcpy(phso,g0,sizeof(double)*n0); 
+  vector_resize((IvocVect*)vhso,n0); memcpy(phso,g0,sizeof(double)*n0); 
   hoc_call_func(pHocVecFunc,0); dm0 = hretval; //get measure on original group 0
-  vector_resize(vhso,n1); memcpy(phso,g1,sizeof(double)*n1); 
+  vector_resize((IvocVect*)vhso,n1); memcpy(phso,g1,sizeof(double)*n1); 
   hoc_call_func(pHocVecFunc,0); dm1 = hretval; //get measure on original group 1
   hoc_pushx(dm0); hoc_pushx(dm1); hoc_call_func(pHocCompFunc,2); //call comparison function
   dmobs = onesided?hretval:fabs(hretval); // "observed" value of statistic  
@@ -1194,7 +1150,7 @@ static double rantran (void* vv) {
   int i,j,ix,ixe,ixvn,nvn,rvn,na,xj;
   double *ixv, *nv, *x, y[1], ixn,step,indx;
   rvn=vector_instance_px(vv, &x);
-  for (na=1;ifarg(na);na++); na--; // count args
+  for (na=1;ifarg(na);na++) {} na--; // count args
   for (i=1;i<na;i+=2) {
     if (hoc_is_object_arg(i)) {
       step=-1;
@@ -1420,8 +1376,8 @@ static double bin (void* vv) {
     if (lfl) ix[j]=jj+min;
   }
   maxsz=(max==1e9)?(int)(maxf/invl+1):(int)((max-min)/invl+1);
-  vector_resize(voi[0], maxsz);
-  if (lfl) vector_resize(voi[1], maxsz);
+  vector_resize((IvocVect*)voi[0], maxsz);
+  if (lfl) vector_resize((IvocVect*)voi[1], maxsz);
   return (double)maxsz;
 }
 ENDVERBATIM
@@ -1556,8 +1512,8 @@ unsigned int hashseed2 (int na, double* x) {
     if (xx.i[0]==0) { xx.i[0]=xx.i[1]; xx.i[0]<<=4; } // high order bits may be 0
     if (xx.i[1]==0) { xx.i[1]=xx.i[0]; xx.i[1]<<=4; } // low order bits unlikely 0
     xx.i[0]+=(i+1); xx.i[1]+=(i+1); // so different for different order args
-    mcell_ran4_init(&xx.i[1]);
-    mcell_ran4(&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
+    mcell_ran4_init(xx.i[1]);
+    mcell_ran4((unsigned int*)&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
     while (y>UINT_MAX) y/=1e9; // UINT_MAX is 4.294967e+09
     valseed*=(unsigned int)y;  // keep multiplying these out
   }
@@ -1622,7 +1578,7 @@ FUNCTION mc4seed () {
   for (i=2;ifarg(i);i++) {
     valseed*=(unsigned int)(*getarg(i));
   }
-  mcell_ran4_init(&valseed); // do initialization
+  mcell_ran4_init(valseed); // do initialization
   return valseed;
   ENDVERBATIM
 }
@@ -1650,7 +1606,7 @@ FUNCTION gammln (xx) {
 FUNCTION betai(a,b,x) {
 VERBATIM {
   double bt;
-  double gammln(),betacf();
+  double gammln(double),betacf(double,double,double);
 
   if (_lx < 0.0 || _lx > 1.0) {printf("Bad x in routine BETAI\n"); hxe();}
   if (_lx == 0.0 || _lx == 1.0) bt=0.0;
@@ -1724,7 +1680,7 @@ FUNCTION tstat() {
 
 FUNCTION tdistrib() {
   VERBATIM
-  double gammln();
+  double gammln(double);
   double x = *getarg(1);
   double dof = *getarg(2);
   double res = (gammln( (dof+1.0) / 2.0 )  / gammln( dof / 2.0 ) );
